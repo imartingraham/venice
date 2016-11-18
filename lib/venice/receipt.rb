@@ -39,22 +39,21 @@ module Venice
 
     def initialize(attributes = {})
       @original_json_response = attributes['original_json_response']
-
       @bundle_id = attributes['bundle_id']
       @application_version = attributes['application_version']
       @original_application_version = attributes['original_application_version']
-      if attributes['original_purchase_date']
-        @original_purchase_date = DateTime.parse(attributes['original_purchase_date'])
-      end
-      if attributes['expiration_date']
-        @expires_at = Time.at(attributes['expiration_date'].to_i / 1000).to_datetime
-      end
-
+      
+      expires_at = attributes['expiration_date']
+      @expires_at = DateTime.parse(expiration_date) if expiration_date
+      
+      original_purchase_date = attributes['original_purchase_date']
+      @original_purchase_date = DateTime.parse(original_purchase_date) if original_purchase_date
+      
       @receipt_type = attributes['receipt_type']
       @adam_id = attributes['adam_id']
       @download_id = attributes['download_id']
       @requested_at = DateTime.parse(attributes['request_date']) if attributes['request_date']
-
+      
       @in_app = []
       if attributes['in_app']
         attributes['in_app'].each do |in_app_purchase_attributes|
