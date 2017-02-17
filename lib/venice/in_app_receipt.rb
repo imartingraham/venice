@@ -81,7 +81,7 @@ module Venice
       expires_date = attributes['expires_date']
       @expires_date = DateTime.parse(expires_date) if expires_date
       
-      cancelation_date = attributes['expires_date']
+      cancelation_date = attributes['cancellation_date']
       @cancellation_date = DateTime.parse(cancelation_date) if cancelation_date
       
       # expires_date is in ms since the Epoch, Time.at expects seconds
