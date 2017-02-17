@@ -48,7 +48,7 @@ describe Venice::InAppReceipt do
     it 'should output a hash with attributes' do
       in_app_receipt.to_h.should include(
         :app_item_id => "com.foo.app1",
-        :cancellation_date => "Sat, 28 Jun 2014 07:47:53 GMT",
+        :cancellation_date => "Sat, 28 Jun 2014 14:47:53 GMT",
         :expires_date => "Sat, 28 Jun 2014 07:47:53 GMT",
         :original_purchase_date => "Wed, 28 May 2014 14:47:53 GMT",
         :original_transaction_id => "140xxx867509",
