@@ -5,12 +5,12 @@ describe Venice::Client do
   let(:client) { subject }
 
   describe "#verify!" do
-    context "with no verification_url" do      
+    context "with no verification_url" do
       it "should raise error" do
          expect { client.verify!("foo") }.to raise_error(Venice::Client::NoVerificationEndpointError)
       end
     end
-    
+
     context 'with a receipt response' do
       before do
         client.stub(:json_response_from_verifying_data).and_return(response)

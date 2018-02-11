@@ -18,7 +18,8 @@ describe Venice::InAppReceipt do
         'version_external_identifier' => '123',
         'app_item_id' => 'com.foo.app1',
         'expires_date' => '2014-06-28 07:47:53 America/Los_Angeles',
-        'expires_date_ms' => '1403941673000'
+        'expires_date_ms' => '1403941673000',
+        "cancellation_date" => "2014-06-28 14:47:53 Etc/GMT",
       }
     end
 
@@ -29,20 +30,19 @@ describe Venice::InAppReceipt do
     its(:quantity) { 1 }
     its(:product_id) { 'com.foo.product1' }
     its(:transaction_id) { '1000000070107235' }
-    its(:purchased_at) { should be_instance_of DateTime }
     its(:app_item_id) { 'com.foo.app1' }
     its(:version_external_identifier) { '123' }
     its(:original_transaction_id) { '140xxx867509' }
     its(:original_purchase_date) { should be_instance_of DateTime }
     its(:original) { should be_instance_of Venice::InAppReceipt }
-    its(:expires_at) { should be_instance_of DateTime }
+    its(:expires_at) { should be_instance_of Time }
     its(:purchase_date) { should be_instance_of DateTime }
     its(:cancellation_date) { should be_instance_of DateTime }
 
     it "should parse the 'original' attributes" do
         subject.original.should be_instance_of Venice::InAppReceipt
         subject.original.transaction_id.should == '140xxx867509'
-        subject.original.purchased_at.should be_instance_of DateTime
+        subject.original.purchase_date.should be_instance_of DateTime
     end
 
     it 'should output a hash with attributes' do

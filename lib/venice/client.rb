@@ -7,9 +7,9 @@ module Venice
   APPSTORE_DEV_ENDPOINT = 'https://sandbox.itunes.apple.com/verifyReceipt'.freeze
 
   class Client
-    
+
     class NoVerificationEndpointError < StandardError; end
-    
+
     attr_accessor :verification_url
     attr_writer :shared_secret
     attr_writer :exclude_old_transactions
@@ -35,7 +35,7 @@ module Venice
 
     def verify!(data, options = {})
       raise NoVerificationEndpointError if @verification_url.to_s.empty?
-      
+
       @shared_secret = options[:shared_secret] if options[:shared_secret]
       @exclude_old_transactions = options[:exclude_old_transactions] if options[:exclude_old_transactions]
 
