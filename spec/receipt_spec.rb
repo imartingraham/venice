@@ -59,7 +59,7 @@ describe Venice::Receipt do
     its(:in_app) { should be_instance_of Array }
     its(:original_application_version) { '1' }
     its(:original_purchase_date) { should be_instance_of DateTime }
-    its(:expires_at) { should be_instance_of DateTime }
+    its(:expires_date) { should be_instance_of DateTime }
     its(:receipt_type) { 'Production' }
     its(:adam_id) { 7654321 }
     its(:download_id) { 1234567 }

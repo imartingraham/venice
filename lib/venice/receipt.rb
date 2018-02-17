@@ -21,7 +21,7 @@ module Venice
     attr_reader :original_purchase_date
 
     # The date that the app receipt expires.
-    attr_reader :expires_at
+    attr_reader :expires_date
 
     # Non-Documented receipt keys/values
     attr_reader :receipt_type
@@ -43,8 +43,8 @@ module Venice
       @application_version = attributes['application_version']
       @original_application_version = attributes['original_application_version']
 
-      expires_at = attributes['expiration_date']
-      @expires_at = Time.at(expires_at.to_i / 1000).to_datetime if expires_at
+      expires_date = attributes['expiration_date']
+      @expires_date = Time.at(expires_date.to_i / 1000).to_datetime if expires_date
 
       original_purchase_date = attributes['original_purchase_date']
       @original_purchase_date = DateTime.parse(original_purchase_date) if original_purchase_date

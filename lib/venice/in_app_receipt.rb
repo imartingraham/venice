@@ -58,12 +58,6 @@ module Venice
     # For a transaction that restores a previous transaction, this is the original receipt
     attr_accessor :original
 
-    # For auto-renewable subscriptions, returns the date the subscription will expire
-    attr_reader :expires_at
-
-    # For a transaction that was canceled by Apple customer support, the time and date of the cancellation.
-    attr_reader :cancellation_at
-
     def initialize(attributes = {})
       @quantity = Integer(attributes['quantity']) if attributes['quantity']
       @product_id = attributes['product_id']
@@ -72,25 +66,27 @@ module Venice
       @version_external_identifier = attributes['version_external_identifier']
       @original_transaction_id = attributes['original_transaction_id']
 
-      purchase_date = attributes['purchase_date']
-      @purchase_date = DateTime.parse(purchase_date) if purchase_date
+      if purchase_date = attributes['purchase_date']
+        @purchase_date = DateTime.parse(purchase_date)
+      end
 
-      orig_date = attributes['original_purchase_date']
-      @original_purchase_date = DateTime.parse(orig_date) if orig_date
+      if orig_date = attributes['original_purchase_date']
+        @original_purchase_date = DateTime.parse(orig_date)
+      end
 
-      expires_date = attributes['expires_date']
-      @expires_date = DateTime.parse(expires_date) if expires_date
+      begin
+        expires_date = attributes['expires_date']
+        @expires_date = DateTime.parse(expires_date) if expires_date
+      rescue ArgumentError
+        @expires_date = Time.at(expires_date.to_i / 1000).to_datetime
+      end
 
-      cancelation_date = attributes['cancellation_date']
-      @cancellation_date = DateTime.parse(cancelation_date) if cancelation_date
-
-      # expires_date is in ms since the Epoch, Time.at expects seconds
-      expires_date_ms = attributes['expires_date_ms']
-      @expires_at = Time.at(expires_date_ms.to_i / 1000) if expires_date_ms
-
-      # cancellation_date is in ms since the Epoch, Time.at expects seconds
-      cancellation_date_ms = attributes['cancellation_date_ms']
-      @cancellation_at = Time.at(cancellation_date_ms.to_i / 1000) if cancellation_date_ms
+      begin
+        cancellation_date = attributes['cancellation_date']
+        @cancellation_date = DateTime.parse(cancellation_date) if cancellation_date
+      rescue ArgumentError
+        @cancellation_date = Time.at(cancellation_date.to_i / 1000).to_datetime
+      end
 
       if attributes['original_transaction_id'] || attributes['original_purchase_date']
           original_attributes = {
@@ -110,8 +106,6 @@ module Venice
         purchase_date: (@purchase_date.httpdate rescue nil),
         expires_date: (@expires_date.httpdate rescue nil),
         cancellation_date: (@cancellation_date.httpdate rescue nil),
-        expires_at: (@expires_at.httpdate rescue nil),
-        cancellation_at: (@cancellation_at.httpdate rescue nil),
         original_purchase_date: (@original_purchase_date.httpdate rescue (@original.purchased_at.httpdate rescue nil)),
         original_transaction_id: @original_transaction_id || (@original.transaction_id rescue nil),
         app_item_id: @app_item_id,

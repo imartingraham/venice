@@ -2,12 +2,13 @@ require 'spec_helper'
 
 describe Venice::Client do
   let(:receipt_data) { 'asdfzxcvjklqwer' }
-  let(:client) { subject }
+  let(:client) { Venice::Client.development }
 
   describe "#verify!" do
     context "with no verification_url" do
       it "should raise error" do
-         expect { client.verify!("foo") }.to raise_error(Venice::Client::NoVerificationEndpointError)
+        client.verification_url = nil
+        expect { client.verify!("foo") }.to raise_error(Venice::Client::NoVerificationEndpointError)
       end
     end
 
