@@ -4,6 +4,25 @@ describe Venice::Client do
   let(:receipt_data) { 'asdfzxcvjklqwer' }
   let(:client) { Venice::Client.development }
 
+  describe '#verify!' do
+    let(:response) do
+      Venice::ItcVerificationResponse.new({
+        'status' => 0,
+        'receipt' => {}
+      })
+    end
+
+    before do
+      client.stub(:response_from_verifying_data!).and_return(response)
+    end
+
+    let(:itc_response) { client.verify('asdf') }
+
+    it 'should create the itc verification response' do
+      itc_response.should_not be_nil
+    end
+  end
+
   describe "#verify!" do
     context "with no verification_url" do
       it "should raise error" do
@@ -14,19 +33,19 @@ describe Venice::Client do
 
     context 'with a receipt response' do
       before do
-        client.stub(:json_response_from_verifying_data).and_return(response)
+        client.stub(:response_from_verifying_data!).and_return(response)
       end
 
       let(:response) do
-        {
+        Venice::ItcVerificationResponse.new({
           'status' => 0,
           'receipt' => {}
-        }
+        })
       end
 
       it 'does not generate a self-referencing Hash' do
-        receipt = client.verify! 'asdf'
-        expect(receipt.original_json_response['receipt']).not_to have_key('original_json_response')
+        response = client.verify! 'asdf'
+        expect(response.original_json_response['receipt']).not_to have_key('original_json_response')
       end
     end
 
@@ -81,11 +100,11 @@ describe Venice::Client do
 
     context 'with a latest receipt info attribute' do
       before do
-        client.stub(:json_response_from_verifying_data).and_return(response)
+        client.stub(:response_from_verifying_data!).and_return(response)
       end
 
       let(:response) do
-        {
+        Venice::ItcVerificationResponse.new({
           'status' => 0,
           'receipt' => {},
           'latest_receipt' => '<encoded string>',
@@ -111,25 +130,25 @@ describe Venice::Client do
               'item_id' => '590265423'
             }
           ]
-        }
+        })
       end
 
       it 'should create a latest receipt' do
-        receipt = client.verify! 'asdf'
-        receipt.latest_receipt_info.should_not be_nil
+        res = client.verify! 'asdf'
+        res.latest_receipt_info.should_not be_nil
       end
     end
 
     context 'with an error response' do
       before do
-        client.stub(:json_response_from_verifying_data).and_return(response)
+        client.stub(:response_from_verifying_data!).and_return(response)
       end
 
       let(:response) do
-        {
+        Venice::ItcVerificationResponse.new({
           'status' => 21000,
           'receipt' => {}
-        }
+        })
       end
 
       it 'raises a VerificationError' do
@@ -145,21 +164,21 @@ describe Venice::Client do
 
     context 'with a retryable error response' do
       before do
-        client.stub(:json_response_from_verifying_data).and_return(response)
+        client.stub(:response_from_verifying_data!).and_return(response)
       end
 
       let(:response) do
-        {
+        Venice::ItcVerificationResponse.new({
           'status' => 21000,
           'receipt' => {},
           'is-retryable' => true
-        }
+        })
       end
 
       it 'raises a VerificationError' do
         expect do
           client.verify!('asdf')
-        end.to raise_error(Venice::Receipt::VerificationError) do |error|
+        end.to raise_error(Venice::VerificationError) do |error|
           expect(error).to be_retryable
         end
       end

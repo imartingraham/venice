@@ -43,6 +43,16 @@ module Venice
       @cancellation_reason = Integer(attributes['cancellation_reason']) if attributes['cancellation_reason']
     end
 
+    def self.parse_from(json)
+      pending_renewal_info = []
+      if pending_renewal_info_attrs = json['pending_renewal_info']
+        pending_renewal_info_attrs.each do |pending_renewal_attributes|
+          pending_renewal_info << new(pending_renewal_attributes)
+        end
+      end
+      pending_renewal_info
+    end
+
     def to_hash
       {
         expiration_intent: @expiration_intent,

@@ -29,14 +29,6 @@ module Venice
     attr_reader :download_id
     attr_reader :requested_at
 
-    # Original json response from AppStore
-    attr_reader :original_json_response
-
-    attr_accessor :latest_receipt_info
-
-    # Information about the status of the customer's auto-renewable subscriptions
-    attr_reader :pending_renewal_info
-
     def initialize(attributes = {})
       @original_json_response = attributes['original_json_response']
       @bundle_id = attributes['bundle_id']
@@ -60,13 +52,6 @@ module Venice
           @in_app << InAppReceipt.new(in_app_purchase_attributes)
         end
       end
-
-      @pending_renewal_info = []
-      if original_json_response && original_json_response['pending_renewal_info']
-        original_json_response['pending_renewal_info'].each do |pending_renewal_attributes|
-          @pending_renewal_info << PendingRenewalInfo.new(pending_renewal_attributes)
-        end
-      end
     end
 
     def to_hash
@@ -80,9 +65,7 @@ module Venice
         adam_id: @adam_id,
         download_id: @download_id,
         requested_at: (@requested_at.httpdate rescue nil),
-        in_app: @in_app.map(&:to_h),
-        pending_renewal_info: @pending_renewal_info.map(&:to_h),
-        latest_receipt_info: @latest_receipt_info
+        in_app: @in_app.map(&:to_h)
       }
     end
     alias_method :to_h, :to_hash
@@ -91,77 +74,5 @@ module Venice
       to_hash.to_json
     end
 
-    class << self
-      def verify(data, options = {})
-        verify!(data, options)
-      rescue VerificationError, Client::TimeoutError
-        false
-      end
-
-      def verify!(data, options = {})
-        client = Client.production
-
-        begin
-          client.verify!(data, options)
-        rescue VerificationError => error
-          case error.code
-          when 21007
-            client = Client.development
-            retry
-          when 21008
-            client = Client.production
-            retry
-          else
-            raise error
-          end
-        end
-      end
-
-      alias :validate :verify
-      alias :validate! :verify!
-    end
-
-    class VerificationError < StandardError
-      attr_accessor :json
-
-      def initialize(json)
-        @json = json
-      end
-
-      def code
-        Integer(json['status'])
-      end
-
-      def retryable?
-        json['is-retryable']
-      end
-
-      def message
-        case code
-        when 21000
-          'The App Store could not read the JSON object you provided.'
-        when 21002
-          'The data in the receipt-data property was malformed.'
-        when 21003
-          'The receipt could not be authenticated.'
-        when 21004
-          'The shared secret you provided does not match the shared secret on file for your account.'
-        when 21005
-          'The receipt server is not currently available.'
-        when 21006
-          'This receipt is valid but the subscription has expired. When this status code is returned to your server, the receipt data is also decoded and returned as part of the response.'
-        when 21007
-          'This receipt is a sandbox receipt, but it was sent to the production service for verification.'
-        when 21008
-          'This receipt is a production receipt, but it was sent to the sandbox service for verification.'
-        when 21010
-          'This receipt could not be authorized. Treat this the same as if a purchase was never made.'
-        when 21100..21199
-          'Internal data access error.'
-        else
-          "Unknown Error: #{code}"
-        end
-      end
-    end
   end
 end

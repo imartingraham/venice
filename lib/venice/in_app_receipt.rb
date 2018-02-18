@@ -19,16 +19,6 @@ module Venice
     # This value corresponds to the transaction’s transactionIdentifier property.
     attr_reader :transaction_id
 
-    # For a transaction that restores a previous transaction, the transaction identifier
-    #   of the original transaction. Otherwise, identical to the transaction identifier.
-    # This value corresponds to the original transaction’s transactionIdentifier property.
-    attr_reader :original_transaction_id
-
-    # For a transaction that restores a previous transaction, the date of the original
-    # transaction.
-    # This value corresponds to the original transaction’s transactionDate property.
-    attr_reader :original_purchase_date
-
     # The date and time this transaction occurred.
     # This value corresponds to the transaction’s transactionDate property.
     attr_reader :purchase_date
@@ -64,7 +54,8 @@ module Venice
       @transaction_id = attributes['transaction_id']
       @app_item_id = attributes['app_item_id']
       @version_external_identifier = attributes['version_external_identifier']
-      @original_transaction_id = attributes['original_transaction_id']
+      @is_trial_period = attributes['is_trial_period'] || false
+      @is_in_intro_offer_period = attributes['is_in_intro_offer_period'] || false
 
       if purchase_date = attributes['purchase_date']
         @purchase_date = DateTime.parse(purchase_date)
@@ -77,14 +68,14 @@ module Venice
       begin
         expires_date = attributes['expires_date']
         @expires_date = DateTime.parse(expires_date) if expires_date
-      rescue ArgumentError
+      rescue ArgumentError => e
         @expires_date = Time.at(expires_date.to_i / 1000).to_datetime
       end
 
       begin
         cancellation_date = attributes['cancellation_date']
         @cancellation_date = DateTime.parse(cancellation_date) if cancellation_date
-      rescue ArgumentError
+      rescue ArgumentError => e
         @cancellation_date = Time.at(cancellation_date.to_i / 1000).to_datetime
       end
 
@@ -94,8 +85,22 @@ module Venice
               'purchase_date' => attributes['original_purchase_date']
           }
 
-          self.original = InAppReceipt.new(original_attributes)
+          @original = InAppReceipt.new(original_attributes)
       end
+    end
+
+    # This method is only useful for auto-renewable subscription receipts.
+    # This will return "true" if the customer’s subscription
+    # is currently in the free trial period, or "false" if not.
+    def is_trial_period?
+      @is_trial_period
+    end
+
+    # This method is only useful for auto-renewable subscription receipts.
+    # This will return "true" if the customer’s subscription is
+    # currently in an introductory price period, or "false" if not.
+    def is_in_intro_offer_period?
+      @is_in_intro_offer_period
     end
 
     def to_hash

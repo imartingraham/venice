@@ -33,49 +33,47 @@ module Venice
       @shared_secret = ENV['IAP_SHARED_SECRET']
     end
 
+    def verify(data, options = {})
+      verify!(data, options)
+    rescue Venice::VerificationError, Client::TimeoutError
+      false
+    end
+
     def verify!(data, options = {})
-      raise NoVerificationEndpointError if @verification_url.to_s.empty?
+      client = Client.production
 
-      @shared_secret = options[:shared_secret] if options[:shared_secret]
-      @exclude_old_transactions = options[:exclude_old_transactions] if options[:exclude_old_transactions]
-
-      json = json_response_from_verifying_data(data, options)
-      receipt_attributes = json['receipt'].dup if json['receipt']
-      receipt_attributes['original_json_response'] = json if receipt_attributes
-
-      case json['status'].to_i
-      when 0, 21006
-        receipt = Receipt.new(receipt_attributes)
-
-        # From Apple docs:
-        # > Only returned for iOS 6 style transaction receipts for auto-renewable subscriptions.
-        # > The JSON representation of the receipt for the most recent renewal
-        if latest_receipt_info_attributes = json['latest_receipt_info']
-          receipt.latest_receipt_info = []
-          if latest_receipt_info_attributes.is_a? Array
-            latest_receipt_info_attributes.each do |latest_receipt_info_attribute|
-              receipt.latest_receipt_info << InAppReceipt.new(latest_receipt_info_attribute)
-            end
-          elsif latest_receipt_info_attributes.is_a? Hash
-            receipt.latest_receipt_info << InAppReceipt.new(latest_receipt_info_attribute)
-          end
+      begin
+        response_from_verifying_data!(data, options)
+      rescue Venice::VerificationError => error
+        case error.code
+        when 21007
+          client = Client.development
+          retry
+        when 21008
+          client = Client.production
+          retry
+        else
+          raise error
         end
-
-        return receipt
-      else
-        raise Receipt::VerificationError, json
       end
     end
+    alias :validate :verify
+    alias :validate! :verify!
 
     private
 
-    def json_response_from_verifying_data(data, options = {})
+    def response_from_verifying_data!(data, options = {})
+      raise NoVerificationEndpointError if @verification_url.to_s.empty?
+
       parameters = {
         'receipt-data': data
       }
 
-      parameters['password'] = @shared_secret if @shared_secret
-      parameters['exclude-old-transactions'] = @exclude_old_transactions if @exclude_old_transactions
+      shared_secret = options[:shared_secret]
+      parameters['password'] = shared_secret if shared_secret
+
+      exclude_old = options[:exclude_old_transactions]
+      parameters['exclude-old-transactions'] = exclude_old if exclude_old
 
       uri = URI(@verification_url)
       http = Net::HTTP.new(uri.host, uri.port)
@@ -96,7 +94,19 @@ module Venice
         raise TimeoutError
       end
 
-      JSON.parse(response.body)
+      json = JSON.parse(response.body)
+
+      puts ""
+      puts "Venice::Client.json_response_from_verifying_data json: #{json.inspect}"
+      puts ""
+
+      response = ItcVerificationResponse.new(json)
+
+      puts ""
+      puts "Venice::Client.json_response_from_verifying_data response: #{response.inspect}"
+      puts ""
+
+      response
     end
   end
 

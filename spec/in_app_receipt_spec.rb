@@ -4,7 +4,7 @@ describe Venice::InAppReceipt do
   describe '.new' do
     let :attributes do
       {
-        'quantity' => 1,
+        'quantity' => '1',
         'product_id' => 'com.foo.product1',
         'transaction_id' => '1000000070107235',
         'purchase_date' => '2014-05-28 14:47:53 Etc/GMT',
@@ -14,11 +14,11 @@ describe Venice::InAppReceipt do
         'original_purchase_date' => '2014-05-28 14:47:53 Etc/GMT',
         'original_purchase_date_ms' => '1401288473000',
         'original_purchase_date_pst' => '2014-05-28 07:47:53 America/Los_Angeles',
-        'is_trial_period' => false,
+        'is_trial_period' => 'false',
         'version_external_identifier' => '123',
         'app_item_id' => 'com.foo.app1',
         'expires_date' => '2014-06-28 07:47:53 America/Los_Angeles',
-        'expires_date_ms' => 1403941673000,
+        'expires_date_ms' => '1403941673000',
         'cancellation_date' => '2014-06-28 14:47:53 Etc/GMT',
       }
     end
