@@ -32,8 +32,6 @@ describe Venice::InAppReceipt do
     its(:transaction_id) { should eq '1000000070107235' }
     its(:app_item_id) { should eq 'com.foo.app1' }
     its(:version_external_identifier) { should eq '123' }
-    its(:original_transaction_id) { should eq '140xxx867509' }
-    its(:original_purchase_date) { should be_instance_of DateTime }
     its(:original) { should be_instance_of Venice::InAppReceipt }
     its(:expires_date) { should be_instance_of DateTime }
     its(:purchase_date) { should be_instance_of DateTime }

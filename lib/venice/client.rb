@@ -69,7 +69,7 @@ module Venice
         'receipt-data': data
       }
 
-      shared_secret = options[:shared_secret]
+      shared_secret = options[:shared_secret] || @shared_secret
       parameters['password'] = shared_secret if shared_secret
 
       exclude_old = options[:exclude_old_transactions]
@@ -95,18 +95,7 @@ module Venice
       end
 
       json = JSON.parse(response.body)
-
-      puts ""
-      puts "Venice::Client.json_response_from_verifying_data json: #{json.inspect}"
-      puts ""
-
-      response = ItcVerificationResponse.new(json)
-
-      puts ""
-      puts "Venice::Client.json_response_from_verifying_data response: #{response.inspect}"
-      puts ""
-
-      response
+      ItcVerificationResponse.new(json)
     end
   end
 

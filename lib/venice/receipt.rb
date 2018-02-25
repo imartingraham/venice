@@ -20,7 +20,9 @@ module Venice
     # The original purchase date
     attr_reader :original_purchase_date
 
-    # The date that the app receipt expires.
+    # This key is present only for apps purchased through the
+    # Volume Purchase Program.
+    # If this key is not present, the receipt does not expire.
     attr_reader :expires_date
 
     # Non-Documented receipt keys/values

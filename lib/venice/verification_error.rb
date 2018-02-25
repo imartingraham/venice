@@ -7,8 +7,7 @@ module Venice
     end
 
     def code
-      puts "json: #{json.inspect}"
-      Integer(json['status'])
+      json['status'].to_i
     end
 
     def retryable?

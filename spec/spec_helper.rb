@@ -10,6 +10,9 @@ end
 require 'venice'
 require 'rspec'
 require 'rspec/its'
+require 'webmock/rspec'
+
+WebMock.disable_net_connect!
 
 RSpec.configure do |config|
   config.mock_with :rspec do |mocks|
