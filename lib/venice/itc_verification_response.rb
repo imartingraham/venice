@@ -24,6 +24,9 @@ module Venice
     # Information about the status of the customer's auto-renewable subscriptions
     attr_reader :pending_renewal_info
 
+    # NOTE: Only present for app store subscription notifications
+    # More info: https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/StoreKitGuide/Chapters/Subscriptions.html#//apple_ref/doc/uid/TP40008267-CH7-SW16
+    #
     # The current renewal status for the auto-renewable subscription.
     #
     # This key is only present for auto-renewable subscription receipts, for
@@ -34,6 +37,9 @@ module Venice
     # downgrade to from their current plan.
     attr_reader :auto_renew_status
 
+    # NOTE: Only present for app store subscription notifications
+    # More info: https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/StoreKitGuide/Chapters/Subscriptions.html#//apple_ref/doc/uid/TP40008267-CH7-SW16
+    #
     # The current renewal preference for the auto-renewable subscription.
     #
     # This key is only present for auto-renewable subscription receipts.
@@ -43,18 +49,24 @@ module Venice
     # before the current subscription period ends.
     attr_reader :auto_renew_product_id
 
-    # When using subscription server notifications, this will only be
-    # populated for a subscription notification event.
+    # NOTE: Only present for app store subscription notifications
+    # More info: https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/StoreKitGuide/Chapters/Subscriptions.html#//apple_ref/doc/uid/TP40008267-CH7-SW16
     #
     # Describes the kind of event that triggered the notification.
     # See values in Table 6-4. (https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/StoreKitGuide/Chapters/Subscriptions.html#//apple_ref/doc/uid/TP40008267-CH7-SW16)
     attr_reader :notification_type
 
+    # NOTE: Only present for app store subscription notifications
+    # More info: https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/StoreKitGuide/Chapters/Subscriptions.html#//apple_ref/doc/uid/TP40008267-CH7-SW16
+    #
     # The time and date that a transaction was cancelled by Apple
     # customer support. Posted only if the notification_type is CANCEL.
     # See values and descriptions in NotificationType.
     attr_reader :cancellation_date
 
+    # NOTE: Only present for app store subscription notifications
+    # More info: https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/StoreKitGuide/Chapters/Subscriptions.html#//apple_ref/doc/uid/TP40008267-CH7-SW16
+    #
     # This value is the same as the Original Transaction Identifier in
     # the receipt. You can use this value to relate multiple iOS 6-style
     # transaction receipts for an individual customer’s subscription.
@@ -111,9 +123,7 @@ module Venice
     end
 
     def is_subscription?
-      pending_info = @pending_renewal_info
-      pending_auto_renew_product_id = pending_info && pending_info.auto_renew_product_id
-      !@auto_renew_product_id.nil? || !pending_auto_renew_product_id.nil?
+      !@auto_renew_product_id.nil? || !@pending_renewal_info.nil?
     end
 
     def to_hash

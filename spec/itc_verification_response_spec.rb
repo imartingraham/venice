@@ -176,6 +176,6 @@ describe Venice::ItcVerificationResponse do
         }
       ])
     end
-    
+
   end
 end

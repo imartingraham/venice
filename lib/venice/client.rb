@@ -26,6 +26,18 @@ module Venice
         client.verification_url = APPSTORE_PROD_ENDPOINT
         client
       end
+
+      def verify(data, options)
+        client = Client.production
+        client.verify(data, options)
+      end
+      alias :validate :verify
+
+      def verify!(data, options)
+        client = Client.production
+        client.verify!(data, options)
+      end
+      alias :validate! :verify!
     end
 
     def initialize
@@ -38,26 +50,26 @@ module Venice
     rescue Venice::VerificationError, Client::TimeoutError
       false
     end
+    alias :validate :verify
 
     def verify!(data, options = {})
-      client = Client.production
+      @verification_url ||= APPSTORE_PROD_ENDPOINT
 
       begin
         response_from_verifying_data!(data, options)
       rescue Venice::VerificationError => error
         case error.code
         when 21007
-          client = Client.development
+          @verification_url = APPSTORE_DEV_ENDPOINT
           retry
         when 21008
-          client = Client.production
+          @verification_url = APPSTORE_PROD_ENDPOINT
           retry
         else
           raise error
         end
       end
     end
-    alias :validate :verify
     alias :validate! :verify!
 
     private

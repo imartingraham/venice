@@ -39,9 +39,20 @@ describe Venice::Client do
     end
 
     context "with no verification_url" do
-      it "should raise error" do
+      it "defaults to production verification endpoint" do
+        stub_request(:post, Venice::APPSTORE_PROD_ENDPOINT).
+        to_return(status: 200, body: "{\"status\":0, \"receipt\": {}}", headers: {})
+
         client.verification_url = nil
-        expect { client.verify!("foo") }.to raise_error(Venice::Client::NoVerificationEndpointError)
+        client.verify! receipt_data
+
+        expect(a_request(:post, Venice::APPSTORE_PROD_ENDPOINT).
+        with(
+          body: {
+            'receipt-data' => 'asdfzxcvjklqwer',
+          },
+          headers: headers)).
+        to have_been_made.once
       end
     end
 
