@@ -58,12 +58,11 @@ module Venice
       @is_trial_period = attributes['is_trial_period'] || false
       @is_in_intro_offer_period = attributes['is_in_intro_offer_period'] || false
 
-      if purchase_date = attributes['purchase_date']
-        @purchase_date = DateTime.parse(purchase_date)
-      end
-
-      if orig_date = attributes['original_purchase_date']
-        @original_purchase_date = DateTime.parse(orig_date)
+      begin
+        purchase_date = attributes['purchase_date']
+        @purchase_date = DateTime.parse(purchase_date) if purchase_date
+      rescue ArgumentError => e
+        @purchase_date = Time.at(purchase_date.to_i / 1000).to_datetime
       end
 
       begin
@@ -80,13 +79,13 @@ module Venice
         @cancellation_date = Time.at(cancellation_date.to_i / 1000).to_datetime
       end
 
-      if attributes['original_transaction_id'] || attributes['original_purchase_date']
-          original_attributes = {
-              'transaction_id' => attributes['original_transaction_id'],
-              'purchase_date' => attributes['original_purchase_date']
-          }
-
-          @original = InAppReceipt.new(original_attributes)
+      orig_trans_id = attributes['original_transaction_id']
+      orig_purchase_date = attributes['original_purchase_date']
+      if orig_trans_id || orig_purchase_date
+          @original = InAppReceipt.new({
+              'transaction_id' => orig_trans_id,
+              'purchase_date' => orig_purchase_date
+          })
       end
     end
 
@@ -112,8 +111,8 @@ module Venice
         purchase_date: (@purchase_date.httpdate rescue nil),
         expires_date: (@expires_date.httpdate rescue nil),
         cancellation_date: (@cancellation_date.httpdate rescue nil),
-        original_purchase_date: (@original_purchase_date.httpdate rescue (@original.purchased_at.httpdate rescue nil)),
-        original_transaction_id: @original_transaction_id || (@original.transaction_id rescue nil),
+        original_purchase_date: (@original.purchase_date.httpdate rescue nil),
+        original_transaction_id: (@original.transaction_id rescue nil),
         app_item_id: @app_item_id,
         version_external_identifier: @version_external_identifier,
       }
