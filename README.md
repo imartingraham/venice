@@ -22,7 +22,7 @@ gem 'venice', git: 'https://github.com/atljeremy/venice.git'
 Alternatively you can specify a tag:
 
 ```ruby
-gem 'venice', git: 'https://github.com/atljeremy/venice.git', :tag => 'v0.4.0'
+gem 'venice', git: 'https://github.com/atljeremy/venice.git', :tag => 'v0.4.3'
 ```
 
 ## Usage
