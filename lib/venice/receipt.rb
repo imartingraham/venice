@@ -17,6 +17,12 @@ module Venice
     # The version of the app that was originally purchased.
     attr_reader :original_application_version
 
+    # For a transaction that restores a previous transaction, the date of the original transaction.
+    #
+    # In an auto-renewable subscription receipt, this indicates the beginning
+    # of the subscription period, even if the subscription has been renewed.
+    attr_reader :original_purchase_date
+
     # The date when the app receipt was created
     attr_reader :creation_date
 
@@ -75,6 +81,6 @@ module Venice
     def to_json
       to_hash.to_json
     end
-    
+
   end
 end
