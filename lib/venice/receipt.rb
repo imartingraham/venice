@@ -11,14 +11,14 @@ module Venice
     # The app’s version number.
     attr_reader :application_version
 
-    # The receipt for an in-app purchase.
+    # The receipt for an in-app purchase. In the JSON file, the value of this key is an array containing all in-app purchase receipts.
     attr_reader :in_app
 
     # The version of the app that was originally purchased.
     attr_reader :original_application_version
 
-    # The original purchase date
-    attr_reader :original_purchase_date
+    # The date when the app receipt was created
+    attr_reader :creation_date
 
     # This key is present only for apps purchased through the
     # Volume Purchase Program.
@@ -75,6 +75,6 @@ module Venice
     def to_json
       to_hash.to_json
     end
-
+    
   end
 end

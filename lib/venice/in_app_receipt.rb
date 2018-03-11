@@ -5,7 +5,8 @@ module Venice
     # For detailed explanations on these keys/values, see
     # https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ReceiptFields.html#//apple_ref/doc/uid/TP40010573-CH106-SW12
 
-    # The number of items purchased.
+    # The number of items purchased. 
+    #
     # This value corresponds to the quantity property of the SKPayment object
     #   stored in the transaction’s payment property.
     attr_reader :quantity

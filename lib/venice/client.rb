@@ -3,6 +3,7 @@ require 'net/https'
 require 'uri'
 
 module Venice
+  
   APPSTORE_PROD_ENDPOINT = 'https://buy.itunes.apple.com/verifyReceipt'.freeze
   APPSTORE_DEV_ENDPOINT = 'https://sandbox.itunes.apple.com/verifyReceipt'.freeze
 
