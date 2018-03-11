@@ -1,3 +1,3 @@
 module Venice
-  VERSION = "0.4.0"
+  VERSION = File.exist?('VERSION') ? File.read('VERSION') : ""
 end

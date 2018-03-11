@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe Venice::Receipt do
-  describe 'parsing the response' do
-    let(:response) do
-      Venice::ItcVerificationResponse.new({
+describe Venice::ItcVerificationResponse do
+  describe 'parsing the verification response' do
+    let(:json) do
+      {
          'status' => 0,
          'environment' => 'Sandbox',
          'receipt' => {
@@ -24,7 +24,6 @@ describe Venice::Receipt do
             'original_purchase_date_ms' => '1375340400000',
             'original_purchase_date_pst' => '2013-08-01 00:00:00 America/Los_Angeles',
             'original_application_version' => '1.0',
-            'expiration_date' => '2020-08-01 00:00:00 America/Los_Angeles',
             'in_app' => [
                {
                   'quantity' => '1',
@@ -148,36 +147,24 @@ describe Venice::Receipt do
                'is_in_billing_retry_period' => '0'
             }
          ]
-      })
+      }
     end
 
-    subject { response.receipt }
-
-    its(:bundle_id) { should eq 'com.test.appid' }
-    its(:application_version) { should eq '7' }
-    its(:in_app) { should be_instance_of Array }
-    its(:original_application_version) { should eq '1.0' }
-    its(:original_purchase_date) { should be_instance_of DateTime }
-    its(:expires_date) { should be_instance_of DateTime }
-    its(:receipt_type) { should eq 'ProductionSandbox' }
-    its(:adam_id) { should eq 7654321 }
-    its(:download_id) { should eq 1234567 }
-    its(:requested_at) { should be_instance_of DateTime }
-
-    describe '#verify!' do
-      before do
-        Venice::Client.any_instance.stub(:response_from_verifying_data).and_return(response)
-      end
-
-      let(:receipt) { Venice::Client.verify('asdf').receipt }
-
-      it 'should create the receipt' do
-        response.receipt.should_not be_nil
-      end
+    let(:response) do
+      Venice::ItcVerificationResponse.new json
     end
+
+    subject { response }
+
+    its(:original_json_response) { should eq json }
+    its(:status) { should eq 0 }
+    its(:environment) { should eq 'Sandbox' }
+    its(:receipt) { should be_instance_of Venice::Receipt }
+    its(:latest_receipt_info) { should be_instance_of Array }
+    its(:pending_renewal_info) { should be_instance_of Array }
 
     it 'parses the pending rerenewal information' do
-      expect(response.to_hash[:pending_renewal_info]).to eql([
+      expect(subject.to_h[:pending_renewal_info]).to eql([
         {
           expiration_intent: nil,
           auto_renew_status: 1,
@@ -189,5 +176,6 @@ describe Venice::Receipt do
         }
       ])
     end
+
   end
 end

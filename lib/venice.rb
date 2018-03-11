@@ -1,5 +1,8 @@
-require File.join(File.dirname(__FILE__), 'venice', 'version')
-require File.join(File.dirname(__FILE__), 'venice', 'verification_error')
-require File.join(File.dirname(__FILE__), 'venice', 'client')
-require File.join(File.dirname(__FILE__), 'venice', 'in_app_receipt')
-require File.join(File.dirname(__FILE__), 'venice', 'receipt')
+require 'venice/version'
+require 'venice/client'
+require 'venice/in_app_receipt'
+require 'venice/receipt'
+require 'venice/pending_renewal_info'
+require 'venice/latest_receipt_info'
+require 'venice/itc_verification_response'
+require 'venice/verification_error'

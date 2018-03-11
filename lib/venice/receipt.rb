@@ -20,30 +20,40 @@ module Venice
     # The date when the app receipt was created
     attr_reader :creation_date
 
-    # The date that the app receipt expires.
-    attr_reader :expiration_date
+    # This key is present only for apps purchased through the
+    # Volume Purchase Program.
+    # If this key is not present, the receipt does not expire.
+    attr_reader :expires_date
 
-    # Original json response from AppStore
-    attr_reader :original_json_response
+    # Non-Documented receipt keys/values
+    attr_reader :receipt_type
+    attr_reader :adam_id
+    attr_reader :download_id
+    attr_reader :requested_at
 
-    attr_accessor :latest_receipt_info
-    
     def initialize(attributes = {})
       @original_json_response = attributes['original_json_response']
       @bundle_id = attributes['bundle_id']
       @application_version = attributes['application_version']
       @original_application_version = attributes['original_application_version']
-      
-      expiration_date = attributes['expiration_date']
-      @expiration_date = DateTime.parse(expiration_date) if expiration_date
-      
-      creation_date = attributes['creation_date']
-      @creation_date = DateTime.parse(creation_date) if creation_date
-      
+
+      expires_date = attributes['expiration_date']
+      @expires_date = Time.at(expires_date.to_i / 1000).to_datetime if expires_date
+
+      original_purchase_date = attributes['original_purchase_date']
+      @original_purchase_date = DateTime.parse(original_purchase_date) if original_purchase_date
+
+      @receipt_type = attributes['receipt_type']
+      @adam_id = attributes['adam_id']
+      @download_id = attributes['download_id']
+      @requested_at = DateTime.parse(attributes['request_date']) if attributes['request_date']
+
       @in_app = []
-      attributes['in_app'].each do |iap_attributes|
-        @in_app << InAppReceipt.new(iap_attributes)
-      end if attributes['in_app']
+      if attributes['in_app']
+        attributes['in_app'].each do |in_app_purchase_attributes|
+          @in_app << InAppReceipt.new(in_app_purchase_attributes)
+        end
+      end
     end
 
     def to_hash
@@ -51,43 +61,20 @@ module Venice
         bundle_id: @bundle_id,
         application_version: @application_version,
         original_application_version: @original_application_version,
-        creation_date: (@creation_date.httpdate rescue nil),
-        expiration_date: (@expiration_date.httpdate rescue nil),
-        in_app: @in_app.map{ |iap| iap.to_h }
+        original_purchase_date: (@original_purchase_date.httpdate rescue nil),
+        expires_at: (@expires_at.httpdate rescue nil),
+        receipt_type: @receipt_type,
+        adam_id: @adam_id,
+        download_id: @download_id,
+        requested_at: (@requested_at.httpdate rescue nil),
+        in_app: @in_app.map(&:to_h)
       }
     end
     alias_method :to_h, :to_hash
 
     def to_json
-      self.to_hash.to_json
+      to_hash.to_json
     end
-
-    class << self
-      def verify(data, options = {})
-        verify!(data, options) rescue false
-      end
-
-      def verify!(data, options = {})
-        client = Client.production
-
-        begin
-          client.verify!(data, options)
-        rescue Venice::VerificationError => error
-          case error.code
-          when 21007
-            client = Client.development
-            retry
-          when 21008
-            client = Client.production
-            retry
-          else
-            raise error
-          end
-        end
-      end
-
-      alias :validate :verify
-      alias :validate! :verify!
-    end
+    
   end
 end
