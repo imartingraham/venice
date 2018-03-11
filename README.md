@@ -13,7 +13,13 @@ See Apple's [Receipt Validation Programming Guide](https://developer.apple.com/l
 
 ## Installation
 
-    $ gem install venice
+Gemfile:
+    
+    gem 'venice', git: 'git://github.com/atljeremy/venice.git'
+    
+Alternatively you can specify a tag:
+
+    gem 'venice', git: 'git://github.com/atljeremy/venice.git', :tag => 'v0.4.0'
 
 ## Usage
 
