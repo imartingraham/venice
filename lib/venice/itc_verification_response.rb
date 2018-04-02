@@ -42,7 +42,7 @@ module Venice
     end
 
     def is_subscription?
-      !@pending_renewal_info.nil?
+      @pending_renewal_info && !@pending_renewal_info.empty?
     end
 
     def to_hash
