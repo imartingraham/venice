@@ -71,6 +71,7 @@ module Venice
       # Customer changed the plan that takes affect at the next
       # subscription renewal. Current active plan is not affected.
       DID_CHANGE_RENEWAL_PREF = "DID_CHANGE_RENEWAL_PREF".freeze
+      DID_CHANGE_RENEWAL_STATUS = "DID_CHANGE_RENEWAL_STATUS".freeze
     end
 
     def initialize(json)
