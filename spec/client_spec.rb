@@ -25,12 +25,11 @@ describe Venice::Client do
     let(:itc_response) { client.verify('asdf') }
 
     it 'should create the itc verification response' do
-      itc_response.should_not be_nil
+      expect(itc_response).to_not be_nil
     end
   end
 
   describe "#verify!" do
-
     let(:response) do
       Venice::ItcVerificationResponse.new({
         'status' => 0,
@@ -180,19 +179,26 @@ describe Venice::Client do
 
       it 'should create a latest receipt' do
         res = client.verify! 'asdf'
-        res.latest_receipt_info.first.product_id.should eq 'com.ficklebits.nsscreencast.monthly_sub'
+        expect(res.latest_receipt_info.first.product_id).to eq 'com.ficklebits.nsscreencast.monthly_sub'
       end
     end
 
     context 'with an error response' do
+      let(:error_body) {
+        {"status": 21000}
+      }
+
+      let(:error_response) {
+        Venice::ItcVerificationResponse.new(error_body)
+      }
+
       it 'raises a VerificationError' do
         stub_request(:post, client.verification_url).
-        to_return(status: 200, body: "{\"status\":21000}", headers: {})
+        to_return(status: 200, body: error_body.to_json, headers: {})
 
         expect do
           client.verify! 'asdf'
         end.to raise_error(Venice::VerificationError) do |error|
-          expect(error.json).to eq(response)
           expect(error.code).to eq(21000)
           expect(error).not_to be_retryable
         end

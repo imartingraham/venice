@@ -172,7 +172,7 @@ describe Venice::Receipt do
       let(:receipt) { Venice::Client.verify('asdf').receipt }
 
       it 'should create the receipt' do
-        response.receipt.should_not be_nil
+        expect(response.receipt).to_not be_nil
       end
     end
 

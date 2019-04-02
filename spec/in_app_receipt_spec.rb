@@ -38,13 +38,13 @@ describe Venice::InAppReceipt do
     its(:cancellation_date) { should be_instance_of DateTime }
 
     it "should parse the 'original' attributes" do
-        subject.original.should be_instance_of Venice::InAppReceipt
-        subject.original.transaction_id.should == '140xxx867509'
-        subject.original.purchase_date.should be_instance_of DateTime
+        expect(subject.original).to be_instance_of Venice::InAppReceipt
+        expect(subject.original.transaction_id).to eq '140xxx867509'
+        expect(subject.original.purchase_date).to be_instance_of DateTime
     end
 
     it 'should output a hash with attributes' do
-      in_app_receipt.to_h.should include(
+      expect(in_app_receipt.to_h).to include(
         :app_item_id => "com.foo.app1",
         :cancellation_date => "Sat, 28 Jun 2014 14:47:53 GMT",
         :expires_date => "Sat, 28 Jun 2014 07:47:53 GMT",
