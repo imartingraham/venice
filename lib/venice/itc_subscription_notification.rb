@@ -83,7 +83,7 @@ module Venice
       @notification_type = json['notification_type']
       cancel_date = json['cancellation_date']
       @cancellation_date = DateTime.parse(cancel_date) if cancel_date
-      @original_transaction_id = json['original_transaction_id']
+      @original_transaction_id = @latest_receipt_info.original.transaction_id
     end
 
     def to_hash

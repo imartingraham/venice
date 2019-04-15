@@ -54,6 +54,7 @@ describe Venice::ItcVerificationResponse do
       its("latest_receipt_info.original.transaction_id") {
         should eq '1000000375019271'
       }
+      its(:original_transaction_id) { should eq '1000000375019271' }
     end
 
     describe 'with expired receipt info' do
@@ -108,6 +109,7 @@ describe Venice::ItcVerificationResponse do
       its("latest_receipt_info.original.transaction_id") {
         should eq '1000000876957628'
       }
+      its(:original_transaction_id) { should eq '1000000876957628' }
     end
   end
 end
