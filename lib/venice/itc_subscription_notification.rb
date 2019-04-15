@@ -14,6 +14,10 @@ module Venice
     attr_reader :latest_receipt_info
     alias :latest_expired_receipt_info :latest_receipt_info
 
+    # Base64 encoded string which represents the latest receipt
+    attr_reader :latest_receipt
+    alias :latest_expired_receipt :latest_receipt
+
     # The current renewal status for the auto-renewable subscription.
     #
     # This key is only present for auto-renewable subscription receipts, for
@@ -76,6 +80,7 @@ module Venice
 
     def initialize(json)
       @original_json_response = json
+      @latest_receipt = json['latest_receipt'] || json['latest_expired_receipt']
       @environment = json['environment']
       @latest_receipt_info = Venice::LatestReceiptInfo.parse_from(json).first
       @auto_renew_status = json['auto_renew_status']
@@ -89,6 +94,7 @@ module Venice
     def to_hash
       {
         latest_receipt_info: @latest_receipt_info.map(&:to_h),
+        latest_receipt: @latest_receipt,
         auto_renew_status: @auto_renew_status,
         auto_renew_product_id: @auto_renew_product_id,
         notification_type: @notification_type,

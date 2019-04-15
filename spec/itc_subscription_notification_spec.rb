@@ -44,6 +44,7 @@ describe Venice::ItcVerificationResponse do
       subject { notification }
 
       its(:original_json_response) { should eq receipt_notif_json }
+      its(:latest_receipt) { should eq '<receipt-data>' }
       its(:environment) { should eq 'Sandbox' }
       its(:latest_receipt_info) { should be_instance_of Venice::InAppReceipt }
       its(:auto_renew_status) { should eq 'true' }
@@ -99,6 +100,7 @@ describe Venice::ItcVerificationResponse do
       subject { notification }
 
       its(:original_json_response) { should eq expired_receipt_notif_json }
+      its(:latest_receipt) { should eq '<receipt-data>' }
       its(:environment) { should eq 'Sandbox' }
       its(:latest_receipt_info) { should be_instance_of Venice::InAppReceipt }
       its(:auto_renew_status) { should eq 'false' }
