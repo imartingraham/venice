@@ -163,19 +163,5 @@ describe Venice::ItcVerificationResponse do
     its(:latest_receipt_info) { should be_instance_of Array }
     its(:pending_renewal_info) { should be_instance_of Array }
 
-    it 'parses the pending rerenewal information' do
-      expect(subject.to_h[:pending_renewal_info]).to eql([
-        {
-          expiration_intent: nil,
-          auto_renew_status: 1,
-          auto_renew_product_id: 'com.test.productid',
-          is_in_billing_retry_period: false,
-          product_id: 'com.test.productid',
-          price_consent_status: nil,
-          cancellation_reason: nil
-        }
-      ])
-    end
-
   end
 end

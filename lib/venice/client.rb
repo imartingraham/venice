@@ -28,13 +28,13 @@ module Venice
         client
       end
 
-      def verify(data, options)
+      def verify(data, options = {})
         client = Client.production
         client.verify(data, options)
       end
       alias :validate :verify
 
-      def verify!(data, options)
+      def verify!(data, options = {})
         client = Client.production
         client.verify!(data, options)
       end

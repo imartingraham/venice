@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe Venice::Receipt do
   describe 'parsing the response' do
+    let(:client) { Venice::Client.development }
     let(:response) do
       Venice::ItcVerificationResponse.new({
          'status' => 0,
@@ -151,43 +152,23 @@ describe Venice::Receipt do
       })
     end
 
-    subject { response.receipt }
-
-    its(:bundle_id) { should eq 'com.test.appid' }
-    its(:application_version) { should eq '7' }
-    its(:in_app) { should be_instance_of Array }
-    its(:original_application_version) { should eq '1.0' }
-    its(:original_purchase_date) { should be_instance_of DateTime }
-    its(:expires_date) { should be_instance_of DateTime }
-    its(:receipt_type) { should eq 'ProductionSandbox' }
-    its(:adam_id) { should eq 7654321 }
-    its(:download_id) { should eq 1234567 }
-    its(:requested_at) { should be_instance_of DateTime }
-
-    describe '#verify!' do
+    describe '#verify! receipt' do
       before do
-        Venice::Client.any_instance.stub(:response_from_verifying_data).and_return(response)
+        expect(client).to receive(:response_from_verifying_data!).and_return(response)
       end
 
-      let(:receipt) { Venice::Client.verify('asdf').receipt }
+      subject { client.verify('asdf').receipt }
 
-      it 'should create the receipt' do
-        expect(response.receipt).to_not be_nil
-      end
-    end
-
-    it 'parses the pending rerenewal information' do
-      expect(response.to_hash[:pending_renewal_info]).to eql([
-        {
-          expiration_intent: nil,
-          auto_renew_status: 1,
-          auto_renew_product_id: 'com.test.productid',
-          is_in_billing_retry_period: false,
-          product_id: 'com.test.productid',
-          price_consent_status: nil,
-          cancellation_reason: nil
-        }
-      ])
+      its(:bundle_id) { should eq 'com.test.appid' }
+      its(:application_version) { should eq '7' }
+      its(:in_app) { should be_instance_of Array }
+      its(:original_application_version) { should eq '1.0' }
+      its(:original_purchase_date) { should be_instance_of DateTime }
+      its(:expires_date) { should be_instance_of DateTime }
+      its(:receipt_type) { should eq 'ProductionSandbox' }
+      its(:adam_id) { should eq 7654321 }
+      its(:download_id) { should eq 1234567 }
+      its(:requested_at) { should be_instance_of DateTime }
     end
   end
 end

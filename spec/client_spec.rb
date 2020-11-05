@@ -19,7 +19,7 @@ describe Venice::Client do
     end
 
     before do
-      client.stub(:response_from_verifying_data!).and_return(response)
+      expect(client).to receive(:response_from_verifying_data!).and_return(response)
     end
 
     let(:itc_response) { client.verify('asdf') }
@@ -57,7 +57,7 @@ describe Venice::Client do
 
     context 'with a receipt response' do
       before do
-        client.stub(:response_from_verifying_data!).and_return(response)
+        allow(client).to receive(:response_from_verifying_data!).and_return(response)
       end
 
       it 'does not generate a self-referencing Hash' do
@@ -69,7 +69,7 @@ describe Venice::Client do
     context 'no shared_secret' do
       before do
         client.shared_secret = nil
-        Venice::ItcVerificationResponse.stub(:new).and_return(:response)
+        expect(Venice::ItcVerificationResponse).to receive(:new).and_return(:response)
       end
 
       it 'should only include the receipt_data' do
@@ -92,7 +92,7 @@ describe Venice::Client do
       let(:secret) { 'shhhhhh' }
 
       before do
-        Venice::ItcVerificationResponse.stub(:new).and_return(:response)
+        expect(Venice::ItcVerificationResponse).to receive(:new).and_return(:response)
       end
 
       context 'set secret manually' do

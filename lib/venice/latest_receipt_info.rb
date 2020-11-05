@@ -1,9 +1,6 @@
 module Venice
   class LatestReceiptInfo
     def self.parse_from(json)
-      # From Apple docs:
-      # > Only returned for iOS 6 style transaction receipts for auto-renewable subscriptions.
-      # > The JSON representation of the receipt for the most recent renewal
       latest_rec_attrs = json['latest_receipt_info']
       latest_rec_attrs = json['latest_expired_receipt_info'] unless latest_rec_attrs
       latest_receipt_info = []

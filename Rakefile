@@ -17,7 +17,7 @@ Jeweler::Tasks.new do |gem|
   gem.name = "venice"
   gem.homepage = "https://github.com/atljeremy/venice"
   gem.license = "MIT"
-  gem.summary = %Q{iTunes In-App Purchase Receipt Verification}
+  gem.summary = %Q{App Store In-App Purchase Receipt Verification}
   gem.description = %Q{}
   gem.email = "contct@jeremyfox.me"
   gem.authors = ["Jeremy Fox", "Mattt Thompson"]

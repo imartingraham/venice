@@ -9,30 +9,33 @@ describe Venice::PendingRenewalInfo do
         'product_id' => 'com.foo.product1',
         'auto_renew_status' => '0',
         'is_in_billing_retry_period' => '0',
-        'expiration_intent' => '1'
+        'expiration_intent' => '1',
+        'grace_period_expires_date' => '2020-10-02T15:56:58+0000',
+        'grace_period_expires_date_ms' => '1518255510001',
+        'price_consent_status' => '1'
       }
     end
 
-    subject(:pending_info) do
-      described_class.new(attributes)
-    end
+    subject { described_class.new(attributes) }
 
-    it 'parses the attributes correctly' do
-      expect(subject.expiration_intent).to eql(1)
-      expect(subject.auto_renew_status).to eql(0)
-      expect(subject.auto_renew_product_id).to eql('com.foo.product1')
-      expect(subject.is_in_billing_retry_period).to eql(false)
-      expect(subject.product_id).to eql('com.foo.product1')
-    end
+    its(:expiration_intent) { should eq 1 }
+    its(:auto_renew_status) { should eq 0 }
+    its(:auto_renew_product_id) { should eq  'com.foo.product1' }
+    its(:is_in_billing_retry_period) { should eq false }
+    its(:product_id) { should eq 'com.foo.product1' }
 
     it 'outputs attributes in hash' do
-      expect(subject.to_hash).to eql(expiration_intent: 1,
-                                     auto_renew_status: 0,
-                                     auto_renew_product_id: 'com.foo.product1',
-                                     is_in_billing_retry_period: false,
-                                     product_id: 'com.foo.product1',
-                                     price_consent_status: nil,
-                                     cancellation_reason: nil)
+      expect(subject.to_hash).to eql(
+        expiration_intent: 1,
+        auto_renew_status: 0,
+        auto_renew_product_id: 'com.foo.product1',
+        is_in_billing_retry_period: false,
+        product_id: 'com.foo.product1',
+        price_consent_status: '1',
+        grace_period_expires_date: '2020-10-02T15:56:58+00:00',
+        grace_period_expires_date_ms: '1518255510001',
+        original_transaction_id: '37xxxxxxxxx89'
+      )
     end
   end
 end
