@@ -61,14 +61,14 @@ Gem::Specification.new do |s|
 
   if s.respond_to? :add_runtime_dependency then
     s.add_runtime_dependency(%q<json>.freeze, [">= 0"])
-    s.add_runtime_dependency(%q<commander>.freeze, ["~> 4.1"])
+    s.add_runtime_dependency(%q<commander>.freeze, ["4.5.2"])
     s.add_runtime_dependency(%q<terminal-table>.freeze, ["~> 1.4"])
     s.add_development_dependency(%q<rdoc>.freeze, ["~> 3.12"])
     s.add_development_dependency(%q<bundler>.freeze, [">= 0"])
     s.add_development_dependency(%q<jeweler>.freeze, ["~> 2.3.9"])
   else
     s.add_dependency(%q<json>.freeze, [">= 0"])
-    s.add_dependency(%q<commander>.freeze, ["~> 4.1"])
+    s.add_dependency(%q<commander>.freeze, ["4.5.2"])
     s.add_dependency(%q<terminal-table>.freeze, ["~> 1.4"])
     s.add_dependency(%q<rdoc>.freeze, ["~> 3.12"])
     s.add_dependency(%q<bundler>.freeze, [">= 0"])
